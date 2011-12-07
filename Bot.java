@@ -1,8 +1,12 @@
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * Provides basic game state handling.
  */
 public abstract class Bot extends AbstractSystemInputParser {
     private Ants ants;
+	private Set<Tile> issuedOrders = new TreeSet<Tile>();
     
     /**
      * {@inheritDoc}
@@ -46,6 +50,7 @@ public abstract class Bot extends AbstractSystemInputParser {
         ants.clearDeadAnts();
         ants.getOrders().clear();
         ants.clearVision();
+        issuedOrders.clear();
     }
     
     /**
@@ -95,4 +100,26 @@ public abstract class Bot extends AbstractSystemInputParser {
     public void afterUpdate() {
         ants.setVision();
     }
+
+	protected Set<Tile> getMyAnts() {
+		return getAnts().getMyAnts();
+	}
+
+	protected void issueOrder(Tile myAnt, Aim direction) {
+		getAnts().issueOrder(myAnt, direction);
+		issuedOrders.add(getAnts().getTile(myAnt, direction));
+	}
+
+	protected boolean isPassable(Tile myAnt, Aim direction) {
+		return isPassableIlk(myAnt, direction) && haveNoOrders(myAnt, direction);
+	}
+
+	private boolean haveNoOrders(Tile myAnt, Aim direction) {
+		Tile tile = getAnts().getTile(myAnt, direction);
+		return !issuedOrders.contains(tile);
+	}
+
+	private boolean isPassableIlk(Tile myAnt, Aim direction) {
+		return getAnts().getIlk(myAnt, direction).isPassable();
+	}
 }

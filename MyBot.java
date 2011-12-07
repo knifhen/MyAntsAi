@@ -1,7 +1,9 @@
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Random;
 
 /**
  * Starter bot implementation.
@@ -17,6 +19,10 @@ public class MyBot extends Bot {
     public static void main(String[] args) throws IOException {
         new MyBot().readSystemInput();
     }
+
+
+
+	private List<Aim> directions = Arrays.asList(Aim.NORTH, Aim.EAST, Aim.SOUTH, Aim.WEST);
     
     /**
      * For every ant check every direction in fixed order (N, E, S, W) and move it if the tile is
@@ -24,29 +30,20 @@ public class MyBot extends Bot {
      */
     @Override
     public void doTurn() {
-        Ants ants = getAnts();
-        Iterator<Tile> myAnts = ants.getMyAnts().iterator();
-        for(Tile food: ants.getFoodTiles()) {
-        	if(!myAnts.hasNext()) {
-        		break;
-        	}
-        	Tile ant = myAnts.next();
-        	List<Aim> directions = ants.getDirections(ant, food);
-        	for(Aim direction: directions) {
-            	if(ants.getIlk(ant, direction).isPassable()) {
-            		ants.issueOrder(ant, direction);
-            		break;
-            	}        		
-        	}
-        }
-        while(myAnts.hasNext()) {
-        	Tile myAnt = myAnts.next();
-            for (Aim direction : Aim.values()) {
-                if (ants.getIlk(myAnt, direction).isPassable()) {
-                    ants.issueOrder(myAnt, direction);
+        explore();
+    }
+
+    
+    
+	private void explore() {
+		Collections.rotate(directions, new Random().nextInt(4));
+		for(Tile myAnt: getMyAnts()) {
+            for (Aim direction : directions) {
+                if (isPassable(myAnt, direction)) {
+                    issueOrder(myAnt, direction);
                     break;
                 }
             }
         }
-    }
+	}
 }
