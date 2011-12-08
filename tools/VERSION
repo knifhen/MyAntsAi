@@ -1,0 +1,9 @@
+This tools package was published on Tue Dec  6 01:10:57 UTC 2011.
+
+Last change in the ants/ folder was:
+commit af81ba0d809d759da23845dc8733859ace4101ad
+Date:   Mon Dec 5 01:23:10 2011 -0800
+
+    prevent cutoff from occuring when ants die on hills
+
+Check https://github.com/aichallenge/aichallenge/ants/ for new versions.
