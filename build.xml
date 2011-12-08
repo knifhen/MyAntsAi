@@ -13,25 +13,23 @@
         <zip basedir="src" destfile="ants.zip" includes="*.java"/>
     </target>
 
-    <target name="play" depends="run-game, run-visualizer"/>
-
     <target name="web-play">
         <exec dir="tools" executable="playgame.py">
             <arg value="--player_seed=42" />
             <arg value="--end_wait=0.2" />
             <arg value="--verbose" />
             <arg value="--log_dir=game_logs" />
-            <arg value="--turns=1000" />
+            <arg value="--turns=100" />
             <arg value="--map_file=maps/maze/maze_04p_01.map" />
             <arg value="python sample_bots/python/HunterBot.py" />
-            <arg value="python sample_bots/python/LeftyBot.py" />
+            <arg value="python sample_bots/python/HunterBot.py" />
             <arg value="python sample_bots/python/HunterBot.py" />
             <arg value="java -jar ../MyBot.jar" />
         </exec>
     </target>
 
-    <target name="run-game">
-        <exec dir="tools" executable="playgame.py" output="target/output">
+    <target name="play">
+        <exec dir="tools" executable="instantplay.sh">
             <arg value="-So"/>
             <arg value="--player_seed=42" />
             <arg value="--end_wait=0.2" />
@@ -39,18 +37,10 @@
             <arg value="--log_dir=game_logs" />
             <arg value="--turns=1000" />
             <arg value="--map_file=maps/maze/maze_04p_01.map" />
-            <arg value="python sample_bots/python/HunterBot.py" />
             <arg value="python sample_bots/python/LeftyBot.py" />
             <arg value="python sample_bots/python/HunterBot.py" />
+            <arg value="python sample_bots/python/GreedyBot.py" />
             <arg value="java -jar ../MyBot.jar" />
-        </exec>
-
-    </target>
-    
-    <target name="run-visualizer">
-        <exec dir="tools" executable="java" input="target/output">
-            <arg value="-jar"/>
-            <arg value="visualizer.jar"/>
         </exec>
     </target>
 </project>
