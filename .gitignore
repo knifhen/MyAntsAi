@@ -2,3 +2,5 @@ target
 MyBot.jar
 ants.zip
 Ants.iml
+tools/game_logs
+*.pyc
