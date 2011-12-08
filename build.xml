@@ -1,0 +1,15 @@
+<project>
+    <target name="build">
+        <mkdir dir="target"/>
+        <javac srcdir="src" destdir="target" includes="*.java"/>
+        <jar destfile="MyBot.jar" basedir="target" includes="*.class">
+            <manifest>
+                <attribute name="Main-Class" value="MyBot"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="package">
+        <zip basedir="src" destfile="ants.zip" includes="*.java"/>
+    </target>
+</project>
