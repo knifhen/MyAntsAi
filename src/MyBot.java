@@ -37,7 +37,7 @@ public class MyBot extends Bot {
     
 	private void explore() {
 		Collections.rotate(directions, new Random().nextInt(4));
-		for(Tile myAnt: getMyAnts()) {
+		for(Ant myAnt: getMyAnts()) {
             for (Aim direction : directions) {
                 if (isPassable(myAnt, direction)) {
                     issueOrder(myAnt, direction);

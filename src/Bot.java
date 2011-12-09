@@ -101,17 +101,17 @@ public abstract class Bot extends AbstractSystemInputParser {
         ants.setVision();
     }
 
-	protected Set<Tile> getMyAnts() {
+	protected Set<Ant> getMyAnts() {
 		return getAnts().getMyAnts();
 	}
 
-	protected void issueOrder(Tile myAnt, Aim direction) {
+	protected void issueOrder(Ant myAnt, Aim direction) {
 		getAnts().issueOrder(myAnt, direction);
-		issuedOrders.add(getAnts().getTile(myAnt, direction));
+		issuedOrders.add(getAnts().getTile(myAnt.tile, direction));
 	}
 
-	protected boolean isPassable(Tile myAnt, Aim direction) {
-		return isPassableIlk(myAnt, direction) && haveNoOrders(myAnt, direction);
+	protected boolean isPassable(Ant myAnt, Aim direction) {
+		return isPassableIlk(myAnt.tile, direction) && haveNoOrders(myAnt.tile, direction);
 	}
 
 	private boolean haveNoOrders(Tile myAnt, Aim direction) {

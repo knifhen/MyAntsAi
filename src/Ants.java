@@ -1,8 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Holds all game data and current game state.
@@ -35,7 +31,7 @@ public class Ants {
 
     private final Ilk map[][];
 
-    private final Set<Tile> myAnts = new HashSet<Tile>();
+    private final Set<Ant> myAnts = new HashSet<Ant>();
 
     private final Set<Tile> enemyAnts = new HashSet<Tile>();
 
@@ -46,6 +42,7 @@ public class Ants {
     private final Set<Tile> foodTiles = new HashSet<Tile>();
 
     private final Set<Order> orders = new HashSet<Order>();
+    private HashMap<Tile, Ant> tilesToMyAnts = new HashMap<Tile, Ant>();
 
     /**
      * Creates new {@link Ants} object.
@@ -237,17 +234,17 @@ public class Ants {
     /**
      * Returns location with the specified offset from the specified location.
      * 
-     * @param tile location on the game map
+     * @param ant location on the game map
      * @param offset offset to look up
      * 
      * @return location with <code>offset</code> from <cod>tile</code>
      */
-    public Tile getTile(Tile tile, Tile offset) {
-        int row = (tile.getRow() + offset.getRow()) % rows;
+    public Tile getTile(Ant ant, Tile offset) {
+        int row = (ant.tile.getRow() + offset.getRow()) % rows;
         if (row < 0) {
             row += rows;
         }
-        int col = (tile.getCol() + offset.getCol()) % cols;
+        int col = (ant.tile.getCol() + offset.getCol()) % cols;
         if (col < 0) {
             col += cols;
         }
@@ -259,7 +256,7 @@ public class Ants {
      * 
      * @return a set containing all my ants locations
      */
-    public Set<Tile> getMyAnts() {
+    public Set<Ant> getMyAnts() {
         return myAnts;
     }
 
@@ -378,10 +375,9 @@ public class Ants {
      * Clears game state information about my ants locations.
      */
     public void clearMyAnts() {
-        for (Tile myAnt : myAnts) {
-            map[myAnt.getRow()][myAnt.getCol()] = Ilk.LAND;
+        for (Ant myAnt : myAnts) {
+            map[myAnt.tile.getRow()][myAnt.tile.getCol()] = Ilk.LAND;
         }
-        myAnts.clear();
     }
 
     /**
@@ -447,7 +443,7 @@ public class Ants {
      * Calculates visible information
      */
     public void setVision() {
-        for (Tile antLoc : myAnts) {
+        for (Ant antLoc : myAnts) {
             for (Tile locOffset : visionOffsets) {
                 Tile newLoc = getTile(antLoc, locOffset);
                 visible[newLoc.getRow()][newLoc.getCol()] = true;
@@ -468,12 +464,36 @@ public class Ants {
                 foodTiles.add(tile);
             break;
             case MY_ANT:
-                myAnts.add(tile);
+                updateAnt(tile);
             break;
             case ENEMY_ANT:
                 enemyAnts.add(tile);
             break;
+            case DEAD:
+                removeAnt(tile);
+            break;
         }
+    }
+
+    private void removeAnt(Tile tile) {
+        if(tilesToMyAnts.containsKey(tile)) {
+            Ant ant = tilesToMyAnts.get(tile);
+            myAnts.remove(ant);
+            tilesToMyAnts.remove(tile);
+        }
+    }
+
+    private void updateAnt(Tile tile) {
+        Ant ant = new Ant(tile);
+
+        if(isNewAnt(ant)) {
+            myAnts.add(ant);
+            tilesToMyAnts.put(tile, ant);
+        }
+    }
+
+    private boolean isNewAnt(Ant ant) {
+        return !tilesToMyAnts.containsKey(ant.tile);
     }
 
     /**
@@ -491,13 +511,17 @@ public class Ants {
 
     /**
      * Issues an order by sending it to the system output.
-     * 
+     *
      * @param myAnt map tile with my ant
      * @param direction direction in which to move my ant
      */
-    public void issueOrder(Tile myAnt, Aim direction) {
-        Order order = new Order(myAnt, direction);
+    public void issueOrder(Ant myAnt, Aim direction) {
+        Order order = new Order(myAnt.tile, direction);
         orders.add(order);
         System.out.println(order);
+
+        tilesToMyAnts.remove(myAnt.tile);
+        myAnt.tile = getTile(myAnt.tile, direction);
+        tilesToMyAnts.put(myAnt.tile, myAnt);
     }
 }
