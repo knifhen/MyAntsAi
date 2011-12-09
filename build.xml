@@ -21,9 +21,9 @@
             <arg value="--log_dir=game_logs" />
             <arg value="--turns=100" />
             <arg value="--map_file=maps/maze/maze_04p_01.map" />
+            <arg value="python sample_bots/python/LeftyBot.py" />
             <arg value="python sample_bots/python/HunterBot.py" />
-            <arg value="python sample_bots/python/HunterBot.py" />
-            <arg value="python sample_bots/python/HunterBot.py" />
+            <arg value="python sample_bots/python/GreedyBot.py" />
             <arg value="java -jar ../MyBot.jar" />
         </exec>
     </target>
