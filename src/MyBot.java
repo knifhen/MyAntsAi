@@ -37,10 +37,12 @@ public class MyBot extends Bot {
     
 	private void explore() {
 		Collections.rotate(directions, new Random().nextInt(4));
-		for(Ant myAnt: getMyAnts()) {
+		for(Ant ant: getMyAnts()) {
             for (Aim direction : directions) {
-                if (isPassable(myAnt, direction)) {
-                    issueOrder(myAnt, direction);
+                if (isPassable(ant, direction)) {
+                    ant.orders.add(direction);
+                    ant.orders.add(direction);
+                    issueOrder(ant);
                     break;
                 }
             }

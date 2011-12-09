@@ -105,8 +105,9 @@ public abstract class Bot extends AbstractSystemInputParser {
 		return getAnts().getMyAnts();
 	}
 
-	protected void issueOrder(Ant myAnt, Aim direction) {
-		getAnts().issueOrder(myAnt, direction);
+	protected void issueOrder(Ant myAnt) {
+        Aim direction = myAnt.orders.remove(0);
+        getAnts().issueOrder(myAnt, direction);
 		issuedOrders.add(getAnts().getTile(myAnt.tile, direction));
 	}
 
