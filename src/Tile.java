@@ -1,3 +1,5 @@
+import java.util.Set;
+
 /**
  * Represents a tile of the game map.
  */
@@ -70,5 +72,13 @@ public class Tile implements Comparable<Tile> {
     @Override
     public String toString() {
         return row + " " + col;
+    }
+
+    public boolean isPassableIlk(Ants ants) {
+        return ants.getIlk(this).isPassable();
+    }
+
+    public boolean willBeOccupiedNextTurn(Set<Tile> issuedOrders) {
+        return !issuedOrders.contains(this);
     }
 }
