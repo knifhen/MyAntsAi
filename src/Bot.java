@@ -107,8 +107,10 @@ public abstract class Bot extends AbstractSystemInputParser {
 
 	protected void issueOrder(Ant myAnt) {
         Aim direction = myAnt.orders.remove(0);
-        getAnts().issueOrder(myAnt, direction);
-		issuedOrders.add(getAnts().getTile(myAnt.tile, direction));
+        if(isPassable(myAnt, direction)) {
+            getAnts().issueOrder(myAnt, direction);
+            issuedOrders.add(getAnts().getTile(myAnt.tile, direction));
+        }
 	}
 
 	protected boolean isPassable(Ant myAnt, Aim direction) {
