@@ -14,7 +14,7 @@
     </target>
 
     <target name="web-play">
-        <exec dir="tools" executable="playgame.py">
+        <exec dir="tools" executable="./playgame.py">
             <arg value="--player_seed=42" />
             <arg value="--end_wait=0.2" />
             <arg value="--verbose" />
@@ -29,7 +29,7 @@
     </target>
 
     <target name="play">
-        <exec dir="tools" executable="instantplay.sh">
+        <exec dir="tools" executable="./instantplay.sh">
             <arg value="-So"/>
             <arg value="--player_seed=42" />
             <arg value="--end_wait=0.2" />
