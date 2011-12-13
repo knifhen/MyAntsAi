@@ -1,9 +1,5 @@
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Starter bot implementation.
@@ -23,6 +19,7 @@ public class MyBot extends Bot {
 
 
 	private List<Aim> directions = Arrays.asList(Aim.NORTH, Aim.EAST, Aim.SOUTH, Aim.WEST);
+    private AStar astar;
     
     /**
      * For every ant check every direction in fixed order (N, E, S, W) and move it if the tile is
@@ -30,20 +27,48 @@ public class MyBot extends Bot {
      */
     @Override
     public void doTurn() {
-        explore();
+        astar = new AStar(getAnts());
+        Iterator<Ant> ants = getMyAnts().iterator();
+        findFood(ants);
+        explore(ants);
+        executeOrders(getMyAnts());
     }
 
-    
-    
-	private void explore() {
+    private void executeOrders(Set<Ant> myAnts) {
+        for(Ant ant : myAnts) {
+            issueOrder(ant);
+        }
+    }
+
+    private void findFood(Iterator<Ant> ants) {
+        Set<Tile> foodTiles = getAnts().getFoodTiles();
+        for(Tile food : foodTiles) {
+            if(ants.hasNext()) {
+                Ant ant = ants.next();
+                if(ant.orders.isEmpty()) {
+                    List<Tile> path = astar.findPath(ant.tile, food);
+                    if(!path.isEmpty()) {
+                        ant.orders.addAll(path);
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+    }
+
+
+    private void explore(Iterator<Ant> ants) {
 		Collections.rotate(directions, new Random().nextInt(4));
-		for(Ant ant: getMyAnts()) {
-            for (Aim direction : directions) {
-                if (isPassable(ant, direction)) {
-                    ant.orders.add(direction);
-                    ant.orders.add(direction);
-                    issueOrder(ant);
-                    break;
+		while(ants.hasNext()) {
+            Ant ant = ants.next();
+            if(ant.orders.isEmpty()) {
+                for (Aim direction : directions) {
+                    Tile tile = getAnts().getTile(ant.tile, direction);
+                    if (isPassable(tile)) {
+                        ant.orders.add(tile);
+                        break;
+                    }
                 }
             }
         }

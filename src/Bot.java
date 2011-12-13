@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -106,21 +107,25 @@ public abstract class Bot extends AbstractSystemInputParser {
 	}
 
 	protected void issueOrder(Ant myAnt) {
-        Aim direction = myAnt.orders.remove(0);
-        if(orderIsValid(myAnt, direction)) {
+        if(myAnt.orders.isEmpty()) {
+            return;
+        }
+        Tile tile = myAnt.orders.remove(0);
+
+        if(orderIsValid(tile)) {
+            Aim direction = getAnts().getDirections(myAnt.tile, tile).get(0);
             getAnts().issueOrder(myAnt, direction);
-            issuedOrders.add(getAnts().getTile(myAnt.tile, direction));
+            issuedOrders.add(tile);
         } else {
             myAnt.orders.clear();
         }
 	}
 
-    private boolean orderIsValid(Ant myAnt, Aim direction) {
-        return isPassable(myAnt, direction);
+    private boolean orderIsValid(Tile tile) {
+        return isPassable(tile);
     }
 
-    protected boolean isPassable(Ant myAnt, Aim direction) {
-        Tile tile = getAnts().getTile(myAnt.tile, direction);
+    protected boolean isPassable(Tile tile) {
         return tile.isPassableIlk(getAnts()) && tile.willBeOccupiedNextTurn(issuedOrders);
 	}
 
