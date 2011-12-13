@@ -1,7 +1,10 @@
 <project>
     <target name="build">
-        <mkdir dir="target"/>
-        <javac srcdir="src" destdir="target" includes="*.java"/>
+        <delete dir="target" />
+        <mkdir dir="target" />
+        <javac srcdir="src" destdir="target" includes="*.java" debug="on" debuglevel="lines,vars,source"/>
+
+        <delete file="MyBot.jar" />
         <jar destfile="MyBot.jar" basedir="target" includes="*.class">
             <manifest>
                 <attribute name="Main-Class" value="MyBot"/>
@@ -15,6 +18,7 @@
 
     <target name="web-play">
         <exec dir="tools" executable="./playgame.py">
+            <arg value="-E" />
             <arg value="--player_seed=42" />
             <arg value="--end_wait=0.2" />
             <arg value="--verbose" />
@@ -30,7 +34,7 @@
 
     <target name="play">
         <exec dir="tools" executable="./instantplay.sh">
-            <arg value="-So"/>
+            <arg value="-SoE"/>
             <arg value="--player_seed=42" />
             <arg value="--end_wait=0.2" />
             <arg value="--verbose" />
