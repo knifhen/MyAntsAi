@@ -2,7 +2,7 @@
     <target name="build">
         <delete dir="target" />
         <mkdir dir="target" />
-        <javac srcdir="src" destdir="target" includes="*.java" debug="on" debuglevel="lines,vars,source"/>
+        <javac srcdir="src/main" destdir="target" includes="*.java" debug="on" debuglevel="lines,vars,source"/>
 
         <delete file="MyBot.jar" />
         <jar destfile="MyBot.jar" basedir="target" includes="*.class">
@@ -13,7 +13,7 @@
     </target>
 
     <target name="package">
-        <zip basedir="src" destfile="ants.zip" includes="*.java"/>
+        <zip basedir="src/main" destfile="ants.zip" includes="*.java"/>
     </target>
 
     <target name="web-play">
