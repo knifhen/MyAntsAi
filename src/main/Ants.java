@@ -185,7 +185,7 @@ public class Ants {
      * @return ilk at the <cod>tile</code>
      */
     public Ilk getIlk(Tile tile) {
-        return map[tile.getRow()][tile.getCol()];
+        return map[tile.row][tile.col];
     }
 
     /**
@@ -195,7 +195,7 @@ public class Ants {
      * @param ilk ilk to be set at <code>tile</code>
      */
     public void setIlk(Tile tile, Ilk ilk) {
-        map[tile.getRow()][tile.getCol()] = ilk;
+        map[tile.row][tile.col] = ilk;
     }
 
     /**
@@ -208,7 +208,7 @@ public class Ants {
      */
     public Ilk getIlk(Tile tile, Aim direction) {
         Tile newTile = getTile(tile, direction);
-        return map[newTile.getRow()][newTile.getCol()];
+        return map[newTile.row][newTile.col];
     }
 
     /**
@@ -220,11 +220,11 @@ public class Ants {
      * @return location in <code>direction</code> from <cod>tile</code>
      */
     public Tile getTile(Tile tile, Aim direction) {
-        int row = (tile.getRow() + direction.getRowDelta()) % rows;
+        int row = (tile.row + direction.getRowDelta()) % rows;
         if (row < 0) {
             row += rows;
         }
-        int col = (tile.getCol() + direction.getColDelta()) % cols;
+        int col = (tile.col + direction.getColDelta()) % cols;
         if (col < 0) {
             col += cols;
         }
@@ -240,11 +240,11 @@ public class Ants {
      * @return location with <code>offset</code> from <cod>tile</code>
      */
     public Tile getTile(Ant ant, Tile offset) {
-        int row = (ant.tile.getRow() + offset.getRow()) % rows;
+        int row = (ant.tile.row + offset.row) % rows;
         if (row < 0) {
             row += rows;
         }
-        int col = (ant.tile.getCol() + offset.getCol()) % cols;
+        int col = (ant.tile.col + offset.col) % cols;
         if (col < 0) {
             col += cols;
         }
@@ -313,7 +313,7 @@ public class Ants {
      * @return true if the location is visible
      */
     public boolean isVisible(Tile tile) {
-        return visible[tile.getRow()][tile.getCol()];
+        return visible[tile.row][tile.col];
     }
 
     /**
@@ -325,8 +325,8 @@ public class Ants {
      * @return distance between <code>t1</code> and <code>t2</code>
      */
     public int getDistance(Tile t1, Tile t2) {
-        int rowDelta = Math.abs(t1.getRow() - t2.getRow());
-        int colDelta = Math.abs(t1.getCol() - t2.getCol());
+        int rowDelta = Math.abs(t1.row - t2.row);
+        int colDelta = Math.abs(t1.col - t2.col);
         rowDelta = Math.min(rowDelta, rows - rowDelta);
         colDelta = Math.min(colDelta, cols - colDelta);
         return rowDelta * rowDelta + colDelta * colDelta;
@@ -342,30 +342,34 @@ public class Ants {
      */
     public List<Aim> getDirections(Tile t1, Tile t2) {
         List<Aim> directions = new ArrayList<Aim>();
-        if (t1.getRow() < t2.getRow()) {
-            if (t2.getRow() - t1.getRow() >= rows / 2) {
+        if (t1.row < t2.row) {
+            if (t2.row - t1.row >= rows / 2) {
                 directions.add(Aim.NORTH);
             } else {
                 directions.add(Aim.SOUTH);
             }
-        } else if (t1.getRow() > t2.getRow()) {
-            if (t1.getRow() - t2.getRow() >= rows / 2) {
-                directions.add(Aim.SOUTH);
-            } else {
-                directions.add(Aim.NORTH);
+        } else {
+            if (t1.row > t2.row) {
+                if (t1.row - t2.row >= rows / 2) {
+                    directions.add(Aim.SOUTH);
+                } else {
+                    directions.add(Aim.NORTH);
+                }
             }
         }
-        if (t1.getCol() < t2.getCol()) {
-            if (t2.getCol() - t1.getCol() >= cols / 2) {
+        if (t1.col < t2.col) {
+            if (t2.col - t1.col >= cols / 2) {
                 directions.add(Aim.WEST);
             } else {
                 directions.add(Aim.EAST);
             }
-        } else if (t1.getCol() > t2.getCol()) {
-            if (t1.getCol() - t2.getCol() >= cols / 2) {
-                directions.add(Aim.EAST);
-            } else {
-                directions.add(Aim.WEST);
+        } else {
+            if (t1.col > t2.col) {
+                if (t1.col - t2.col >= cols / 2) {
+                    directions.add(Aim.EAST);
+                } else {
+                    directions.add(Aim.WEST);
+                }
             }
         }
         return directions;
@@ -376,7 +380,7 @@ public class Ants {
      */
     public void clearMyAnts() {
         for (Ant myAnt : myAnts) {
-            map[myAnt.tile.getRow()][myAnt.tile.getCol()] = Ilk.LAND;
+            map[myAnt.tile.row][myAnt.tile.col] = Ilk.LAND;
         }
     }
 
@@ -385,7 +389,7 @@ public class Ants {
      */
     public void clearEnemyAnts() {
         for (Tile enemyAnt : enemyAnts) {
-            map[enemyAnt.getRow()][enemyAnt.getCol()] = Ilk.LAND;
+            map[enemyAnt.row][enemyAnt.col] = Ilk.LAND;
         }
         enemyAnts.clear();
     }
@@ -395,7 +399,7 @@ public class Ants {
      */
     public void clearFood() {
         for (Tile food : foodTiles) {
-            map[food.getRow()][food.getCol()] = Ilk.LAND;
+            map[food.row][food.col] = Ilk.LAND;
         }
         foodTiles.clear();
     }
@@ -446,7 +450,7 @@ public class Ants {
         for (Ant antLoc : myAnts) {
             for (Tile locOffset : visionOffsets) {
                 Tile newLoc = getTile(antLoc, locOffset);
-                visible[newLoc.getRow()][newLoc.getCol()] = true;
+                visible[newLoc.row][newLoc.col] = true;
             }
         }
     }
@@ -458,7 +462,7 @@ public class Ants {
      * @param tile location on the game map to be updated
      */
     public void update(Ilk ilk, Tile tile) {
-        map[tile.getRow()][tile.getCol()] = ilk;
+        map[tile.row][tile.col] = ilk;
         switch (ilk) {
             case FOOD:
                 foodTiles.add(tile);

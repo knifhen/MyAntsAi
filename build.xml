@@ -1,10 +1,17 @@
 <project>
-    <target name="build">
-        <delete dir="target" />
-        <mkdir dir="target" />
-        <javac srcdir="src/main" destdir="target" includes="*.java" debug="on" debuglevel="lines,vars,source"/>
+    <target name="setup">
+        <mkdir dir="target"/>
+        <mkdir dir="lib"/>
+        <get src="http://cloud.github.com/downloads/KentBeck/junit/junit-4.10.jar" dest="target"/>
+    </target>
 
-        <delete file="MyBot.jar" />
+
+    <target name="build">
+        <mkdir dir="target"/>
+        <mkdir dir="target/classes"/>
+        <javac srcdir="src/main" destdir="target/classes" includes="*.java" debug="on" debuglevel="lines,vars,source"/>
+
+        <delete file="MyBot.jar"/>
         <jar destfile="MyBot.jar" basedir="target" includes="*.class">
             <manifest>
                 <attribute name="Main-Class" value="MyBot"/>
@@ -18,33 +25,33 @@
 
     <target name="web-play">
         <exec dir="tools" executable="./playgame.py">
-            <arg value="-E" />
-            <arg value="--player_seed=42" />
-            <arg value="--end_wait=0.2" />
-            <arg value="--verbose" />
-            <arg value="--log_dir=game_logs" />
-            <arg value="--turns=100" />
-            <arg value="--map_file=maps/maze/maze_04p_01.map" />
-            <arg value="python sample_bots/python/LeftyBot.py" />
-            <arg value="python sample_bots/python/HunterBot.py" />
-            <arg value="python sample_bots/python/GreedyBot.py" />
-            <arg value="java -jar ../MyBot.jar" />
+            <arg value="-E"/>
+            <arg value="--player_seed=42"/>
+            <arg value="--end_wait=0.2"/>
+            <arg value="--verbose"/>
+            <arg value="--log_dir=game_logs"/>
+            <arg value="--turns=100"/>
+            <arg value="--map_file=maps/maze/maze_04p_01.map"/>
+            <arg value="python sample_bots/python/LeftyBot.py"/>
+            <arg value="python sample_bots/python/HunterBot.py"/>
+            <arg value="python sample_bots/python/GreedyBot.py"/>
+            <arg value="java -jar ../MyBot.jar"/>
         </exec>
     </target>
 
     <target name="play">
         <exec dir="tools" executable="./instantplay.sh">
             <arg value="-SoE"/>
-            <arg value="--player_seed=42" />
-            <arg value="--end_wait=0.2" />
-            <arg value="--verbose" />
-            <arg value="--log_dir=game_logs" />
-            <arg value="--turns=1000" />
-            <arg value="--map_file=maps/maze/maze_04p_01.map" />
-            <arg value="python sample_bots/python/LeftyBot.py" />
-            <arg value="python sample_bots/python/HunterBot.py" />
-            <arg value="python sample_bots/python/GreedyBot.py" />
-            <arg value="java -jar ../MyBot.jar" />
+            <arg value="--player_seed=42"/>
+            <arg value="--end_wait=0.2"/>
+            <arg value="--verbose"/>
+            <arg value="--log_dir=game_logs"/>
+            <arg value="--turns=1000"/>
+            <arg value="--map_file=maps/maze/maze_04p_01.map"/>
+            <arg value="python sample_bots/python/LeftyBot.py"/>
+            <arg value="python sample_bots/python/HunterBot.py"/>
+            <arg value="python sample_bots/python/GreedyBot.py"/>
+            <arg value="java -jar ../MyBot.jar"/>
         </exec>
     </target>
 </project>

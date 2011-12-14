@@ -4,10 +4,9 @@ import java.util.Set;
  * Represents a tile of the game map.
  */
 public class Tile implements Comparable<Tile> {
-    private final int row;
-    
-    private final int col;
-    
+    public final int row;
+    public final int col;
+
     /**
      * Creates new {@link Tile} object.
      * 
@@ -18,26 +17,8 @@ public class Tile implements Comparable<Tile> {
         this.row = row;
         this.col = col;
     }
-    
+
     /**
-     * Returns row index.
-     * 
-     * @return row index
-     */
-    public int getRow() {
-        return row;
-    }
-    
-    /**
-     * Returns column index.
-     * 
-     * @return column index
-     */
-    public int getCol() {
-        return col;
-    }
-    
-    /** 
      * {@inheritDoc}
      */
     @Override
@@ -80,5 +61,9 @@ public class Tile implements Comparable<Tile> {
 
     public boolean willBeOccupiedNextTurn(Set<Tile> issuedOrders) {
         return !issuedOrders.contains(this);
+    }
+
+    public boolean isUnoccupied(Ants ants) {
+        return ants.getIlk(this).isUnoccupied();
     }
 }
