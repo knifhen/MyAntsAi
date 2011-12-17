@@ -2,7 +2,7 @@
     <target name="setup">
         <mkdir dir="target"/>
         <mkdir dir="lib"/>
-        <get src="http://cloud.github.com/downloads/KentBeck/junit/junit-4.10.jar" dest="target"/>
+        <get src="http://cloud.github.com/downloads/KentBeck/junit/junit-4.10.jar" dest="lib"/>
     </target>
 
 
@@ -11,8 +11,9 @@
         <mkdir dir="target/classes"/>
         <javac srcdir="src/main" destdir="target/classes" includes="*.java" debug="on" debuglevel="lines,vars,source"/>
 
-        <delete file="MyBot.jar"/>
-        <jar destfile="MyBot.jar" basedir="target" includes="*.class">
+        <delete file="target/MyBot.jar"/>
+        <jar destfile="target/MyBot.jar">
+        	<fileset dir="target/classes" includes="**/*.class" />
             <manifest>
                 <attribute name="Main-Class" value="MyBot"/>
             </manifest>
@@ -20,11 +21,25 @@
     </target>
 
     <target name="package">
-        <zip basedir="src/main" destfile="ants.zip" includes="*.java"/>
+        <zip basedir="src/main" destfile="target/ants.zip" includes="*.java"/>
     </target>
 
+	<target name="check-os">
+		<condition property="isWindows">
+			<os family="windows" />
+		</condition>
+		<condition property="isLinux">
+			<os family="unix" />
+		</condition>
+	</target>
+	
     <target name="web-play">
-        <exec dir="tools" executable="./playgame.py">
+        <ant target="linux-web-play"/>
+    	<ant target="windows-web-play"/>
+    </target>
+	
+	<target name="linux-web-play" depends="check-os" if="isLinux">
+		<exec dir="tools" executable="./playgame.py">
             <arg value="-E"/>
             <arg value="--player_seed=42"/>
             <arg value="--end_wait=0.2"/>
@@ -35,11 +50,33 @@
             <arg value="python sample_bots/python/LeftyBot.py"/>
             <arg value="python sample_bots/python/HunterBot.py"/>
             <arg value="python sample_bots/python/GreedyBot.py"/>
-            <arg value="java -jar ../MyBot.jar"/>
+            <arg value="java -jar ../target/MyBot.jar"/>
         </exec>
-    </target>
+	</target>
+	
+	<target name="windows-web-play" depends="check-os" if="isWindows">
+		<exec dir="tools" executable="python">
+			<arg value="playgame.py" />
+            <arg value="-E"/>
+            <arg value="--player_seed=42"/>
+            <arg value="--end_wait=0.2"/>
+            <arg value="--verbose"/>
+            <arg value="--log_dir=game_logs"/>
+            <arg value="--turns=100"/>
+            <arg value="--map_file=maps/maze/maze_04p_01.map"/>
+            <arg value="python sample_bots/python/LeftyBot.py"/>
+            <arg value="python sample_bots/python/HunterBot.py"/>
+            <arg value="python sample_bots/python/GreedyBot.py"/>
+            <arg value="java -jar ../target/MyBot.jar"/>
+        </exec>
+	</target>
 
-    <target name="play">
+	<target name="play">
+		<ant target="linux-play" />
+		<ant target="windows-play" />
+	</target>
+	
+    <target name="linux-play" depends="check-os" if="isLinux">
         <exec dir="tools" executable="./instantplay.sh">
             <arg value="-SoE"/>
             <arg value="--player_seed=42"/>
@@ -51,7 +88,23 @@
             <arg value="python sample_bots/python/LeftyBot.py"/>
             <arg value="python sample_bots/python/HunterBot.py"/>
             <arg value="python sample_bots/python/GreedyBot.py"/>
-            <arg value="java -jar ../MyBot.jar"/>
+            <arg value="java -jar ../target/MyBot.jar"/>
         </exec>
     </target>
+	
+	<target name="windows-play" depends="check-os" if="isWindows">
+		<exec dir="tools" executable="${basedir}\tools\instantplay.cmd">
+            <arg value="-SoE"/>
+            <arg value="--player_seed=42"/>
+            <arg value="--end_wait=0.2"/>
+            <arg value="--verbose"/>
+            <arg value="--log_dir=game_logs"/>
+            <arg value="--turns=1000"/>
+            <arg value="--map_file=maps/maze/maze_04p_01.map"/>
+            <arg value="python sample_bots/python/LeftyBot.py"/>
+            <arg value="python sample_bots/python/HunterBot.py"/>
+            <arg value="python sample_bots/python/GreedyBot.py"/>
+            <arg value="java -jar ../target/MyBot.jar"/>
+        </exec>
+	</target>
 </project>

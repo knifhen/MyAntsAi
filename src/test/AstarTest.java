@@ -1,14 +1,15 @@
-import junit.framework.TestCase;
-import org.junit.Before;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.any;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.junit.matchers.JUnitMatchers.hasItems;
+import junit.framework.TestCase;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class AstarTest extends TestCase {
 
@@ -28,7 +29,8 @@ public class AstarTest extends TestCase {
             attackRadius2, spawnRadius2);
     }
 
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void testFindPath() {
         AStar astar = new AStar(ants);
         Tile start = new Tile(0,0);
@@ -37,7 +39,8 @@ public class AstarTest extends TestCase {
         assertThat(path, hasItems(any(Tile.class)));
     }
     
-    public void testFindPathAroundObstacle() {
+    @SuppressWarnings("unchecked")
+	public void testFindPathAroundObstacle() {
         AStar astar = new AStar(ants);
         ants.setIlk(new Tile(1,1), Ilk.WATER);
         
@@ -49,7 +52,8 @@ public class AstarTest extends TestCase {
         assertThat(path, not(hasItem(new Tile(1,1))));
     }
 
-    public void testFindNoPathAroundObstacle() {
+    @SuppressWarnings("unchecked")
+	public void testFindNoPathAroundObstacle() {
         AStar astar = new AStar(ants);
 
         ants.setIlk(new Tile(0,1), Ilk.WATER);
@@ -64,18 +68,4 @@ public class AstarTest extends TestCase {
         assertThat(path, not(hasItems(any(Tile.class))));
     }
 
-//    public void testFindNoPathAroundAnts() {
-//        AStar astar = new AStar(ants);
-//
-//        ants.setIlk(new Tile(0,1), Ilk.MY_ANT);
-//        ants.setIlk(new Tile(1,0), Ilk.MY_ANT);
-//        ants.setIlk(new Tile(1,2), Ilk.MY_ANT);
-//        ants.setIlk(new Tile(2,1), Ilk.MY_ANT);
-//
-//        Tile start = new Tile(1,1);
-//        Tile goal = new Tile(2,3);
-//
-//        List<Tile> path = astar.findPath(start, goal);
-//        assertThat(path, not(hasItems(any(Tile.class))));
-//    }
 }
