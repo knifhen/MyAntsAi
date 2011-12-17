@@ -1,4 +1,3 @@
-import java.util.Set;
 
 /**
  * Represents a tile of the game map.
@@ -31,7 +30,7 @@ public class Tile implements Comparable<Tile> {
      */
     @Override
     public int hashCode() {
-        return row * Ants.MAX_MAP_SIZE + col;
+        return row * GameState.MAX_MAP_SIZE + col;
     }
     
     /**
@@ -55,15 +54,19 @@ public class Tile implements Comparable<Tile> {
         return row + " " + col;
     }
 
-    public boolean isPassableIlk(Ants ants) {
-        return ants.getIlk(this).isPassable();
+    public boolean isPassableIlk(GameState gameState) {
+        return gameState.getIlk(this).isPassable();
     }
 
-    public boolean willBeOccupiedNextTurn(Set<Tile> issuedOrders) {
-        return issuedOrders.contains(this);
+    public boolean willBeOccupiedNextTurn(GameState gameState) {
+        return gameState.issuedOrders.contains(this);
     }
 
-    public boolean isUnoccupied(Ants ants) {
-        return ants.getIlk(this).isUnoccupied();
+    public boolean isUnoccupied(GameState gameState) {
+        return gameState.getIlk(this).isUnoccupied();
     }
+
+	public boolean isVisible(GameState gameState) {
+		return gameState.visible[this.row][this.col];
+	}
 }

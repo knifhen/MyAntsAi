@@ -13,7 +13,7 @@ import org.junit.Test;
 
 public class AstarTest extends TestCase {
 
-    private Ants ants;
+    private GameState ants;
 
     @Before
     public void setUp() {
@@ -25,7 +25,7 @@ public class AstarTest extends TestCase {
         int viewRadius2 = 0;
         int attackRadius2 = 0;
         int spawnRadius2 = 0;
-        ants = new Ants(loadTime, turnTime, rows, cols, turns, viewRadius2,
+        ants = new GameState(loadTime, turnTime, rows, cols, turns, viewRadius2,
             attackRadius2, spawnRadius2);
     }
 

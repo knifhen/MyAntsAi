@@ -2,9 +2,9 @@ import java.util.*;
 
 public class AStar {
 
-    private Ants ants;
+    private GameState ants;
 
-    public AStar(Ants ants) {
+    public AStar(GameState ants) {
         this.ants = ants;
     }
 

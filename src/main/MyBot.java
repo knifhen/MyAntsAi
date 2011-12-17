@@ -27,28 +27,28 @@ public class MyBot extends Bot {
      */
     @Override
     public void doTurn() {
-        astar = new AStar(getAnts());
+        astar = new AStar(getGameState());
         Iterator<Ant> ants = getMyAnts().iterator();
         findFood(ants);
         explore(ants);
-        executeOrders(getMyAnts());
+        issueOrders(getMyAnts());
     }
 
-    private void executeOrders(Set<Ant> myAnts) {
+    private void issueOrders(Set<Ant> myAnts) {
         for(Ant ant : myAnts) {
             issueOrder(ant);
         }
     }
 
     private void findFood(Iterator<Ant> ants) {
-        Set<Tile> foodTiles = getAnts().getFoodTiles();
+        Set<Tile> foodTiles = getGameState().foodTiles;
         for(Tile food : foodTiles) {
             if(ants.hasNext()) {
                 Ant ant = ants.next();
-                if(ant.orders.isEmpty()) {
+                if(!ant.hasOrder()) {
                     List<Tile> path = astar.findPath(ant.tile, food);
-                    if(!path.isEmpty()) {
-                        ant.orders.addAll(path);
+                    if(foundPath(path)) {
+                    	ant.giveOrder(path);
                     }
                 }
             } else {
@@ -57,6 +57,10 @@ public class MyBot extends Bot {
         }
     }
 
+	private boolean foundPath(List<Tile> path) {
+		return !path.isEmpty();
+	}
+
 
     private void explore(Iterator<Ant> ants) {
 		Collections.rotate(directions, new Random().nextInt(4));
@@ -64,7 +68,7 @@ public class MyBot extends Bot {
             Ant ant = ants.next();
             if(ant.orders.isEmpty()) {
                 for (Aim direction : directions) {
-                    Tile tile = getAnts().getTile(ant.tile, direction);
+                    Tile tile = getGameState().getTile(ant.tile, direction);
                     if (isPassable(tile)) {
                         ant.orders.add(tile);
                         break;

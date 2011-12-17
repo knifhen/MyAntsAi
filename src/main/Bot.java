@@ -1,14 +1,10 @@
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * Provides basic game state handling.
  */
 public abstract class Bot extends AbstractSystemInputParser {
-    private Ants ants;
-	private Set<Tile> issuedOrders = new TreeSet<Tile>();
+    private GameState gameState;
     
     /**
      * {@inheritDoc}
@@ -16,51 +12,35 @@ public abstract class Bot extends AbstractSystemInputParser {
     @Override
     public void setup(int loadTime, int turnTime, int rows, int cols, int turns, int viewRadius2,
             int attackRadius2, int spawnRadius2) {
-        setAnts(new Ants(loadTime, turnTime, rows, cols, turns, viewRadius2, attackRadius2,
+        setGameState(new GameState(loadTime, turnTime, rows, cols, turns, viewRadius2, attackRadius2,
             spawnRadius2));
     }
     
-    /**
-     * Returns game state information.
-     * 
-     * @return game state information
-     */
-    public Ants getAnts() {
-        return ants;
+    public GameState getGameState() {
+        return gameState;
     }
     
-    /**
-     * Sets game state information.
-     * 
-     * @param ants game state information to be set
-     */
-    protected void setAnts(Ants ants) {
-        this.ants = ants;
+    protected void setGameState(GameState gameState) {
+        this.gameState = gameState;
     }
     
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void beforeUpdate() {
-        ants.setTurnStartTime(System.currentTimeMillis());
-        ants.clearMyAnts();
-        ants.clearEnemyAnts();
-        ants.clearMyHills();
-        ants.clearEnemyHills();
-        ants.clearFood();
-        ants.clearDeadAnts();
-        ants.getOrders().clear();
-        ants.clearVision();
-        issuedOrders.clear();
+        gameState.turnStartTime = System.currentTimeMillis();
+        gameState.clearMyAnts();
+        gameState.clearEnemyAnts();
+        gameState.clearMyHills();
+        gameState.clearEnemyHills();
+        gameState.clearFood();
+        gameState.clearDeadAnts();
+        gameState.clearOrders();
+        gameState.clearVision();
     }
     
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void addWater(int row, int col) {
-        ants.update(Ilk.WATER, new Tile(row, col));
+        gameState.update(Ilk.WATER, new Tile(row, col));
     }
     
     /**
@@ -68,7 +48,7 @@ public abstract class Bot extends AbstractSystemInputParser {
      */
     @Override
     public void addAnt(int row, int col, int owner) {
-        ants.update(owner > 0 ? Ilk.ENEMY_ANT : Ilk.MY_ANT, new Tile(row, col));
+        gameState.update(owner > 0 ? Ilk.ENEMY_ANT : Ilk.MY_ANT, new Tile(row, col));
     }
     
     /**
@@ -76,7 +56,7 @@ public abstract class Bot extends AbstractSystemInputParser {
      */
     @Override
     public void addFood(int row, int col) {
-        ants.update(Ilk.FOOD, new Tile(row, col));
+        gameState.update(Ilk.FOOD, new Tile(row, col));
     }
     
     /**
@@ -84,7 +64,7 @@ public abstract class Bot extends AbstractSystemInputParser {
      */
     @Override
     public void removeAnt(int row, int col, int owner) {
-        ants.update(Ilk.DEAD, new Tile(row, col));
+        gameState.update(Ilk.DEAD, new Tile(row, col));
     }
     
     /**
@@ -92,7 +72,7 @@ public abstract class Bot extends AbstractSystemInputParser {
      */
     @Override
     public void addHill(int row, int col, int owner) {
-        ants.updateHills(owner, new Tile(row, col));
+        gameState.updateHills(owner, new Tile(row, col));
     }
     
     /**
@@ -100,37 +80,34 @@ public abstract class Bot extends AbstractSystemInputParser {
      */
     @Override
     public void afterUpdate() {
-        ants.setVision();
+        gameState.setVision();
     }
 
 	protected Set<Ant> getMyAnts() {
-		return getAnts().getMyAnts();
+		return getGameState().myAnts;
 	}
 
 	protected void issueOrder(Ant ant) {
-        if(ant.orders.isEmpty()) {
+        if(!ant.hasOrder()) {
             return;
         }
         Tile tile = ant.orders.get(0);
 
         if(orderIsValid(tile)) {
-            Aim direction = getAnts().getDirections(ant.tile, tile).get(0);
-            getAnts().issueOrder(ant, direction);
-            issuedOrders.add(tile);
+            Aim direction = getGameState().getDirections(ant.tile, tile).get(0);
+            getGameState().issueOrder(ant, direction);
             ant.orders.remove(0);
-            System.err.println("Moving to tile " + tile);
         } else  {
-        	System.err.println("Clearing orders, tile " + tile + " is not valid ");
         	ant.orders.clear();
         }
 	}
 
     private boolean orderIsValid(Tile tile) {
-        return isPassable(tile) && !tile.willBeOccupiedNextTurn(issuedOrders) && tile.isUnoccupied(ants);
+        return isPassable(tile) && !tile.willBeOccupiedNextTurn(gameState) && tile.isUnoccupied(gameState);
     }
 
     protected boolean isPassable(Tile tile) {
-        return tile.isPassableIlk(ants);
+        return tile.isPassableIlk(gameState);
 	}
 
 }
