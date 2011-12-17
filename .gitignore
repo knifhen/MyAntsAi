@@ -5,3 +5,6 @@ Ants.iml
 tools/game_logs
 *.pyc
 lib
+
+/.classpath
+/.project
