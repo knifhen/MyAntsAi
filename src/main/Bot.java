@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -106,27 +107,30 @@ public abstract class Bot extends AbstractSystemInputParser {
 		return getAnts().getMyAnts();
 	}
 
-	protected void issueOrder(Ant myAnt) {
-        if(myAnt.orders.isEmpty()) {
+	protected void issueOrder(Ant ant) {
+        if(ant.orders.isEmpty()) {
             return;
         }
-        Tile tile = myAnt.orders.remove(0);
+        Tile tile = ant.orders.get(0);
 
         if(orderIsValid(tile)) {
-            Aim direction = getAnts().getDirections(myAnt.tile, tile).get(0);
-            getAnts().issueOrder(myAnt, direction);
+            Aim direction = getAnts().getDirections(ant.tile, tile).get(0);
+            getAnts().issueOrder(ant, direction);
             issuedOrders.add(tile);
-        } else {
-            myAnt.orders.clear();
+            ant.orders.remove(0);
+            System.err.println("Moving to tile " + tile);
+        } else  {
+        	System.err.println("Clearing orders, tile " + tile + " is not valid ");
+        	ant.orders.clear();
         }
 	}
 
     private boolean orderIsValid(Tile tile) {
-        return isPassable(tile);
+        return isPassable(tile) && !tile.willBeOccupiedNextTurn(issuedOrders) && tile.isUnoccupied(ants);
     }
 
     protected boolean isPassable(Tile tile) {
-        return tile.isPassableIlk(getAnts()) && tile.willBeOccupiedNextTurn(issuedOrders);
+        return tile.isPassableIlk(ants);
 	}
 
 }

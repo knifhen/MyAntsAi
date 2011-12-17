@@ -20,6 +20,8 @@
         </jar>
     </target>
 
+	<target name="build-and-play" depends="build, play" />
+	
     <target name="package">
         <zip basedir="src/main" destfile="target/ants.zip" includes="*.java"/>
     </target>

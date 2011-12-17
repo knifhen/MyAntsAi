@@ -60,7 +60,7 @@ public class Tile implements Comparable<Tile> {
     }
 
     public boolean willBeOccupiedNextTurn(Set<Tile> issuedOrders) {
-        return !issuedOrders.contains(this);
+        return issuedOrders.contains(this);
     }
 
     public boolean isUnoccupied(Ants ants) {

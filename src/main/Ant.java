@@ -6,6 +6,7 @@ import java.util.List;
 public class Ant {
     public Tile tile;
     public List<Tile> orders = new LinkedList<Tile>();
+	public Tile previousTile;
 
     public Ant(Tile tile) {
         this.tile = tile;

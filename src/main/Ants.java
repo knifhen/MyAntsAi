@@ -379,8 +379,10 @@ public class Ants {
      * Clears game state information about my ants locations.
      */
     public void clearMyAnts() {
-        for (Ant myAnt : myAnts) {
-            map[myAnt.tile.row][myAnt.tile.col] = Ilk.LAND;
+        for (Ant ant : myAnts) {
+        	Tile tile = ant.previousTile != null ? ant.previousTile : ant.tile;
+            map[tile.row][tile.col] = Ilk.LAND;
+            ant.previousTile = ant.tile;
         }
     }
 
@@ -525,6 +527,7 @@ public class Ants {
         System.out.println(order);
 
         tilesToMyAnts.remove(myAnt.tile);
+        myAnt.previousTile = myAnt.tile;
         myAnt.tile = getTile(myAnt.tile, direction);
         tilesToMyAnts.put(myAnt.tile, myAnt);
     }
