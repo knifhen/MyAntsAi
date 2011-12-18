@@ -32,6 +32,11 @@ public class MyBot extends Bot {
 		if(!gameState.myHills.isEmpty())
 			primaryHill = gameState.myHills.iterator().next();
         
+		issueOrders(new HashSet<Ant>(gameState.antsWithOrders));
+		
+		if(gameState.getTimeRemaining() < 10)
+			return;
+		
         List<Ant> gatherAnts  = new LinkedList<Ant>(gameState.antsWithoutOrders.subList(0, getNumberOfAntsToGatherFood()));
         findFood(gatherAnts);
         
@@ -42,7 +47,7 @@ public class MyBot extends Bot {
         	explore(soldierAnts);
         }
       
-        issueOrders(getMyAnts());
+        
     }
 
 	private int getNumberOfAntsToGatherFood() {
@@ -99,6 +104,8 @@ public class MyBot extends Bot {
     	
     	Iterator<Tile> iterator = foodTiles.iterator();
     	for (Ant ant : ants) {
+    		if(gameState.getTimeRemaining() < 10)
+    			return;
     		if(!iterator.hasNext()) {
     			iterator = foodTiles.iterator();
     		}
@@ -108,6 +115,7 @@ public class MyBot extends Bot {
             	ant.giveOrder(path);
             	gameState.antHasOrder(ant);
             }
+    		
 		}
     }
 
@@ -119,6 +127,8 @@ public class MyBot extends Bot {
     private void explore(List<Ant> exploreAnts) {
 		Collections.rotate(directions, new Random().nextInt(4));
 		for (Ant ant : exploreAnts) {
+			if(gameState.getTimeRemaining() < 10)
+				return;
 			for (Aim direction : directions) {
                 Tile tile = getGameState().getTile(ant.tile, direction);
                 if (isPassable(tile)) {
