@@ -21,7 +21,7 @@ public class GameState {
     
     final Set<Ant> myAnts = new HashSet<Ant>();
     final Set<Ant> antsWithOrders = new HashSet<Ant>();
-    final Set<Ant> antsWithoutOrders = new HashSet<Ant>();
+    final List<Ant> antsWithoutOrders = new LinkedList<Ant>();
     
     final Set<Tile> enemyAnts = new HashSet<Tile>();
     final Set<Tile> myHills = new HashSet<Tile>();
@@ -359,18 +359,12 @@ public class GameState {
             myHills.add(tile);
     }
 
-    /**
-     * Issues an order by sending it to the system output.
-     *
-     * @param myAnt map tile with my ant
-     * @param direction direction in which to move my ant
-     */
-    public void issueOrder(Ant myAnt, Aim direction) {
-    	Tile tile = getTile(myAnt.tile, direction);
+    public void issueOrder(Ant ant, Aim direction) {
+    	Tile tile = getTile(ant.tile, direction);
     	
-    	publishOrder(myAnt, direction);
+    	publishOrder(ant, direction);
         saveIssuedOrder(tile);
-        updateAntLocation(myAnt, tile);
+        updateAntLocation(ant, tile);
     }
 
 	private void publishOrder(Ant myAnt, Aim direction) {
@@ -393,5 +387,13 @@ public class GameState {
 	public void clearOrders() {
 		orders.clear();
         issuedOrders.clear();
+	}
+
+	public void antHasOrder(Ant ant) {
+		if(antsWithOrders.contains(ant)) {
+			return;
+		}
+		antsWithOrders.add(ant);
+    	antsWithoutOrders.remove(ant);
 	}
 }
