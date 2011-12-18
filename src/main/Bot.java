@@ -100,9 +100,9 @@ public abstract class Bot extends AbstractSystemInputParser {
         } else  {
         	ant.clearOrders();
         }
-        if(!ant.hasOrder() && gameState.antsWithOrders.contains(ant)) {
-        	gameState.antsWithoutOrders.add(ant);
-        	gameState.antsWithOrders.remove(ant);
+        if(!ant.hasOrder()) {
+        	gameState.antHasNoOrder(ant);
+        	
         }
 	}
 

@@ -32,10 +32,7 @@ public class MyBot extends Bot {
 		if(!gameState.myHills.isEmpty())
 			primaryHill = gameState.myHills.iterator().next();
         
-        int size = gameState.antsWithoutOrders.size();
-		int nAntsPerTask = size / NUMBER_OF_TASKS + size % NUMBER_OF_TASKS;
-
-		List<Ant> gatherAnts  = new LinkedList<Ant>(gameState.antsWithoutOrders.subList(0, nAntsPerTask));
+        List<Ant> gatherAnts  = new LinkedList<Ant>(gameState.antsWithoutOrders.subList(0, getNumberOfAntsToGatherFood()));
         findFood(gatherAnts);
         
         LinkedList<Ant> soldierAnts = new LinkedList<Ant>(gameState.antsWithoutOrders);
@@ -47,6 +44,10 @@ public class MyBot extends Bot {
       
         issueOrders(getMyAnts());
     }
+
+	private int getNumberOfAntsToGatherFood() {
+		return gameState.antsWithoutOrders.size() / NUMBER_OF_TASKS + gameState.antsWithoutOrders.size() % NUMBER_OF_TASKS;
+	}
 
 	private boolean shouldAttack() {
 		return gameState.myAnts.size() > 20 && gameState.enemyHills.size() > 0;
@@ -73,7 +74,10 @@ public class MyBot extends Bot {
 
 	private void issueOrders(Set<Ant> myAnts) {
         for(Ant ant : myAnts) {
-            issueOrder(ant);
+        	if(gameState.getTimeRemaining() > 10)
+        		issueOrder(ant);
+        	else 
+        		break;
         }
     }
 

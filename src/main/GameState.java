@@ -396,4 +396,12 @@ public class GameState {
 		antsWithOrders.add(ant);
     	antsWithoutOrders.remove(ant);
 	}
+
+	public void antHasNoOrder(Ant ant) {
+		if(antsWithoutOrders.contains(ant)) {
+			return;
+		}
+		antsWithoutOrders.add(ant);
+    	antsWithOrders.remove(ant);
+	}
 }
