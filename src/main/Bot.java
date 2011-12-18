@@ -91,14 +91,14 @@ public abstract class Bot extends AbstractSystemInputParser {
         if(!ant.hasOrder()) {
             return;
         }
-        Tile tile = ant.orders.get(0);
+        Tile tile = ant.getFirstOrder();
 
         if(orderIsValid(tile)) {
             Aim direction = getGameState().getDirections(ant.tile, tile).get(0);
             getGameState().issueOrder(ant, direction);
-            ant.orders.remove(0);
+            ant.removeFirstOrder();
         } else  {
-        	ant.orders.clear();
+        	ant.clearOrders();
         }
         if(!ant.hasOrder() && gameState.antsWithOrders.contains(ant)) {
         	gameState.antsWithoutOrders.add(ant);

@@ -5,7 +5,7 @@ public class Ant {
     public Tile tile;
     public Tile previousTile;
 
-    public List<Tile> orders = new LinkedList<Tile>();
+    private List<Tile> orders = new LinkedList<Tile>();
 
     public Ant(Tile tile) {
         this.tile = tile;
@@ -17,5 +17,21 @@ public class Ant {
 
 	public void giveOrder(List<Tile> path) {
 		orders.addAll(path);
+	}
+
+	public void giveOrder(Tile tile) {
+		orders.add(tile);
+	}
+
+	public Tile getFirstOrder() {
+		return orders.get(0);
+	}
+
+	public void removeFirstOrder() {
+		orders.remove(0);
+	}
+
+	public void clearOrders() {
+		orders.clear();
 	}
 }

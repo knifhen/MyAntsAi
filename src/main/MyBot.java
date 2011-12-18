@@ -22,41 +22,77 @@ public class MyBot extends Bot {
 
 	private List<Aim> directions = Arrays.asList(Aim.NORTH, Aim.EAST, Aim.SOUTH, Aim.WEST);
     private AStar astar;
+	private GameState gameState;
+	private Tile primaryHill;
     
-    /**
-     * For every ant check every direction in fixed order (N, E, S, W) and move it if the tile is
-     * passable.
-     */
     @Override
     public void doTurn() {
-        GameState gameState = getGameState();
+        gameState = getGameState();
 		astar = new AStar(gameState);
-//        Iterator<Ant> ants = gameState.myAnts.iterator();
+		if(!gameState.myHills.isEmpty())
+			primaryHill = gameState.myHills.iterator().next();
         
         int size = gameState.antsWithoutOrders.size();
-		System.err.println("Ants without orders: " + size);
 		int nAntsPerTask = size / NUMBER_OF_TASKS + size % NUMBER_OF_TASKS;
-		List<Ant> foodAnts  = new LinkedList<Ant>(gameState.antsWithoutOrders.subList(0, nAntsPerTask));
-		List<Ant> exploreAnts  = new LinkedList<Ant>(gameState.antsWithoutOrders.subList(nAntsPerTask, Math.min(nAntsPerTask * 2, size)));
-		
+
+		List<Ant> gatherAnts  = new LinkedList<Ant>(gameState.antsWithoutOrders.subList(0, nAntsPerTask));
+        findFood(gatherAnts);
         
-        findFood(gameState, foodAnts);
-        explore(gameState, exploreAnts);
+        LinkedList<Ant> soldierAnts = new LinkedList<Ant>(gameState.antsWithoutOrders);
+        if(shouldAttack()) {
+        	attack(soldierAnts);
+        } else {
+        	explore(soldierAnts);
+        }
+      
         issueOrders(getMyAnts());
     }
 
-    private void issueOrders(Set<Ant> myAnts) {
+	private boolean shouldAttack() {
+		return gameState.myAnts.size() > 20 && gameState.enemyHills.size() > 0;
+	}
+
+    private void attack(List<Ant> ants) {
+    	
+    	Tile bestHill = null;
+    	int shortestDistance = Integer.MAX_VALUE;
+    	for(Tile hill : gameState.enemyHills) {
+    		int distance = gameState.getDistance(primaryHill, hill);
+			if(bestHill == null || distance < shortestDistance) {
+    			bestHill = hill;
+    			shortestDistance = distance;
+    		}
+    	}
+    	for (Ant ant : ants) {
+    		List<Tile> path = astar.findPath(ant.tile, bestHill);
+    		ant.giveOrder(path);
+    		gameState.antHasOrder(ant);
+		}
+    	
+	}
+
+	private void issueOrders(Set<Ant> myAnts) {
         for(Ant ant : myAnts) {
             issueOrder(ant);
         }
     }
 
-    private void findFood(GameState gameState, List<Ant> ants) {
-    	Set<Tile> foodTiles = getGameState().foodTiles;
+    private void findFood(List<Ant> ants) {
+    	List<Tile> foodTiles = new LinkedList<Tile>(getGameState().foodTiles);
+    	
     	if(foodTiles.isEmpty() || ants.isEmpty()) {
     		return;
     	}
-    	    	
+    	
+    	Collections.sort(foodTiles, new Comparator<Tile>() {
+			@Override
+			public int compare(Tile o1, Tile o2) {
+				int distance1 = gameState.getDistance(primaryHill, o1);
+				int distance2 = gameState.getDistance(primaryHill, o2);
+				return distance1 - distance2;
+			}}
+    	);
+    	
     	Iterator<Tile> iterator = foodTiles.iterator();
     	for (Ant ant : ants) {
     		if(!iterator.hasNext()) {
@@ -76,13 +112,13 @@ public class MyBot extends Bot {
 	}
 
 
-    private void explore(GameState gameState, List<Ant> exploreAnts) {
+    private void explore(List<Ant> exploreAnts) {
 		Collections.rotate(directions, new Random().nextInt(4));
 		for (Ant ant : exploreAnts) {
 			for (Aim direction : directions) {
                 Tile tile = getGameState().getTile(ant.tile, direction);
                 if (isPassable(tile)) {
-                    ant.orders.add(tile);
+                    ant.giveOrder(tile);
                     gameState.antHasOrder(ant);
                     break;
                 }
